@@ -1,5 +1,4 @@
 # designedbynrc.github.io
-<!DOCTYPE html>
 <html>
 <head>
   MI PORTAFOLIO
