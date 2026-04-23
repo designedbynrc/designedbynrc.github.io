@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portafolio NRC</title>
+  <title>PORTAFOLIO NRC</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/global.css"/>
@@ -201,10 +201,10 @@
   <!-- main content -->
   <main class="home-layout">
     <h1 class="home-name">
-      <span>Tu</span>
-      <span>Nombre</span>
+      <span>PORTAFOLIO</span>
+      <span>NRC</span>
     </h1>
-    <p class="home-role">Diseñador &amp; Desarrollador</p>
+    <p class="home-role">Diseñador Gráfico</p>
 
     <nav class="home-nav">
       <a href="pages/trabajos.html" class="home-btn">
@@ -218,7 +218,7 @@
 
   <div class="scroll-hint">
     <div class="scroll-line"></div>
-    <span>Scroll</span>
+    <span>Desliza para saber más</span>
   </div>
 
   <script>
@@ -336,15 +336,6 @@
       ctx.fillStyle = vg;
       ctx.fillRect(0, 0, W, H);
 
-      // ── Noise overlay (tiled)
-      ctx.globalAlpha = 0.18;
-      // shift noise slightly each frame for animated grain
-      const shift = (t * 30) % 256 | 0;
-      ctx.drawImage(noiseData, shift, shift, W, H);
-      ctx.drawImage(noiseData, shift - 256, shift, W, H);
-      ctx.drawImage(noiseData, shift, shift - 256, W, H);
-      ctx.drawImage(noiseData, shift - 256, shift - 256, W, H);
-      ctx.globalAlpha = 1;
 
       requestAnimationFrame(draw);
     }
