@@ -335,8 +335,10 @@
       vg.addColorStop(1, 'rgba(0,0,0,0.85)');
       ctx.fillStyle = vg;
       ctx.fillRect(0, 0, W, H);
-
-
+      
+      // ── Noise overlay (tiled)
+      ctx.globalAlpha = 0.18;
+      
       requestAnimationFrame(draw);
     }
     draw();
