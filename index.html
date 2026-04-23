@@ -1,125 +1,354 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tu Nombre · Portafolio</title>
-  <meta name="description" content="Portafolio personal de [Tu Nombre]."/>
-  <link rel="stylesheet" href="assets/css/main.css"/>
+  <title>Tu Nombre</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/global.css"/>
+  <style>
+    /* ── HOME: canvas full‑screen gradient ── */
+    body { overflow: hidden; cursor: none; }
+
+    #gradient-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    /* custom cursor */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: #ff2020;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.08s ease, width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,32,32,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: transform 0.18s ease, width 0.25s, height 0.25s;
+    }
+    a:hover ~ .cursor,
+    button:hover ~ .cursor { width: 20px; height: 20px; background: #fff; }
+
+    /* center layout */
+    .home-layout {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100svh;
+      gap: 0;
+    }
+
+    /* name block */
+    .home-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 13rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      text-align: center;
+      color: #fff;
+      mix-blend-mode: difference;
+      user-select: none;
+      pointer-events: none;
+    }
+    .home-name span {
+      display: block;
+      opacity: 0;
+      animation: slideUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .home-name span:nth-child(1) { animation-delay: 0.1s; }
+    .home-name span:nth-child(2) { animation-delay: 0.25s; color: #ff2020; }
+
+    .home-role {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1.2rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 0.6s forwards;
+    }
+
+    /* nav buttons */
+    .home-nav {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 4rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 0.85s forwards;
+    }
+
+    .home-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: color 0.35s, border-color 0.35s;
+    }
+    .home-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #ff2020;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s cubic-bezier(0.76,0,0.24,1);
+      z-index: -1;
+    }
+    .home-btn:hover { border-color: #ff2020; }
+    .home-btn:hover::before { transform: scaleX(1); }
+
+    .home-btn--ghost {
+      color: rgba(255,255,255,0.55);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .home-btn--ghost:hover { color: #fff; }
+
+    /* corner labels */
+    .corner {
+      position: fixed;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      z-index: 20;
+    }
+    .corner-tl { top: 2rem; left: 2rem; }
+    .corner-tr { top: 2rem; right: 2rem; text-align: right; }
+    .corner-br { bottom: 2rem; right: 2rem; }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: fixed;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.4s forwards;
+    }
+    .scroll-hint span {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(255,32,32,0.6), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(40px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%,100% { transform: scaleY(1); opacity:1; }
+      50%      { transform: scaleY(0.6); opacity:0.4; }
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">TN<span class="logo-dot">.</span></a>
-      <nav class="main-nav">
-        <a href="#proyectos">Proyectos</a>
-        <a href="#sobre-mi">Sobre mí</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
-    </div>
-  </header>
+  <canvas id="gradient-canvas"></canvas>
 
-  <section class="hero">
-    <div class="hero-content">
-      <span class="hero-label">✦ Disponible para proyectos</span>
-      <h1 class="hero-title">Hola, soy<br/><em>Tu Nombre</em></h1>
-      <p class="hero-sub">Desarrollador / Diseñador enfocado en crear experiencias digitales con intención y detalle.</p>
-      <a href="#proyectos" class="btn-primary">Ver proyectos ↓</a>
-    </div>
-    <div class="hero-deco" aria-hidden="true">
-      <div class="deco-circle"></div>
-      <div class="deco-ring"></div>
-    </div>
-  </section>
+  <!-- custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-  <section class="projects-section" id="proyectos">
-    <div class="section-header">
-      <span class="section-index">01</span>
-      <h2 class="section-title">Proyectos</h2>
-    </div>
-    <div class="projects-grid">
+  <!-- corner labels -->
+  <div class="corner corner-tl">Portfolio</div>
+  <div class="corner corner-tr" id="corner-coords">00 · 00</div>
+  <div class="corner corner-br">© <span id="yr"></span></div>
 
-      <!-- ╔══════════════════════════════════════════════════╗
-           ║  PLANTILLA DE TARJETA DE PROYECTO               ║
-           ║  Duplica este bloque <article> para cada nuevo  ║
-           ║  proyecto que quieras agregar.                  ║
-           ╚══════════════════════════════════════════════════╝ -->
-      <article class="project-card">
-        <a href="projects/proyecto-01/index.html" class="card-link">
-          <div class="card-thumb">
-            <!-- Reemplaza el placeholder con tu imagen:
-                 <img src="projects/proyecto-01/assets/cover.png" alt="Nombre del proyecto"/> -->
-            <div class="card-thumb-placeholder">P·01</div>
-          </div>
-          <div class="card-body">
-            <div class="card-meta">
-              <span class="tag">Web</span>
-              <span class="tag">React</span>
-              <span class="year">2025</span>
-            </div>
-            <h3 class="card-title">Nombre del Proyecto 01</h3>
-            <p class="card-desc">Breve descripción: qué hace, qué problema resuelve y qué tecnologías usaste.</p>
-            <span class="card-arrow">Ver proyecto →</span>
-          </div>
-        </a>
-      </article>
-      <!-- FIN PLANTILLA ─────────────────────────────────── -->
+  <!-- main content -->
+  <main class="home-layout">
+    <h1 class="home-name">
+      <span>Tu</span>
+      <span>Nombre</span>
+    </h1>
+    <p class="home-role">Diseñador &amp; Desarrollador</p>
 
-      <article class="project-card project-card--soon">
-        <div class="card-link">
-          <div class="card-body">
-            <div class="card-meta"><span class="tag tag--muted">Próximamente</span></div>
-            <h3 class="card-title">Tu próximo proyecto</h3>
-            <p class="card-desc">Aquí irá el siguiente trabajo que agregues a tu portafolio.</p>
-          </div>
-        </div>
-      </article>
+    <nav class="home-nav">
+      <a href="pages/trabajos.html" class="home-btn">
+        Trabajos
+      </a>
+      <a href="pages/sobre-mi.html" class="home-btn home-btn--ghost">
+        Sobre mí
+      </a>
+    </nav>
+  </main>
 
-    </div>
-  </section>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
 
-  <section class="about-section" id="sobre-mi">
-    <div class="section-header">
-      <span class="section-index">02</span>
-      <h2 class="section-title">Sobre mí</h2>
-    </div>
-    <div class="about-grid">
-      <div class="about-text">
-        <p>Cuéntate en unas pocas líneas: qué haces, qué te apasiona y cuál es tu enfoque. Esta sección es tu "elevator pitch" escrito.</p>
-        <p>Puedes mencionar tecnologías, tipo de proyectos que te interesan, o lo que te diferencia de otros.</p>
-      </div>
-      <ul class="skills-list">
-        <li>HTML / CSS / JS</li>
-        <li>React · Vue</li>
-        <li>Node.js</li>
-        <li>Figma · UI Design</li>
-        <li>Git · GitHub</li>
-      </ul>
-    </div>
-  </section>
+  <script>
+    // ── Year
+    document.getElementById('yr').textContent = new Date().getFullYear();
 
-  <section class="contact-section" id="contacto">
-    <div class="section-header">
-      <span class="section-index">03</span>
-      <h2 class="section-title">Contacto</h2>
-    </div>
-    <div class="contact-inner">
-      <p class="contact-lead">¿Tienes un proyecto en mente? Hablemos.</p>
-      <a href="mailto:tu@email.com" class="btn-email">tu@email.com</a>
-      <div class="social-links">
-        <a href="https://github.com/tu-usuario" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://linkedin.com/in/tu-usuario" target="_blank" rel="noopener">LinkedIn</a>
-      </div>
-    </div>
-  </section>
+    // ── Custom cursor
+    const cursor     = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    const coords     = document.getElementById('corner-coords');
+    let mx = window.innerWidth/2, my = window.innerHeight/2;
+    let rx = mx, ry = my;
 
-  <footer class="site-footer">
-    <p>© <span id="year"></span> Tu Nombre · Hecho con HTML, CSS &amp; ☕</p>
-  </footer>
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+      coords.textContent =
+        String(Math.round(mx)).padStart(4,'0') + ' · ' +
+        String(Math.round(my)).padStart(4,'0');
+    });
 
-  <script src="assets/js/main.js"></script>
+    // ring follows with lag
+    function animateRing(){
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // ── Noise gradient canvas
+    const canvas = document.getElementById('gradient-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, noiseData;
+    let t = 0;
+
+    // Pre‑generate a static noise texture (grayscale, 256×256)
+    function makeNoise(w, h) {
+      const off = document.createElement('canvas');
+      off.width = w; off.height = h;
+      const oc  = off.getContext('2d');
+      const img = oc.createImageData(w, h);
+      for (let i = 0; i < img.data.length; i += 4) {
+        const v = Math.random() * 255 | 0;
+        img.data[i] = img.data[i+1] = img.data[i+2] = v;
+        img.data[i+3] = 38;          // very subtle alpha
+      }
+      oc.putImageData(img, 0, 0);
+      return off;
+    }
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      noiseData = makeNoise(256, 256);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Smooth mouse influence
+    let smx = W/2, smy = H/2;
+
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function draw() {
+      // ease mouse
+      smx += (mx - smx) * 0.04;
+      smy += (my - smy) * 0.04;
+      t   += 0.006;
+
+      // Normalised cursor position (0..1)
+      const nx = smx / W;
+      const ny = smy / H;
+
+      // ── Base background: very dark
+      ctx.fillStyle = '#0a0000';
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Blob 1: deep crimson, follows cursor
+      const g1 = ctx.createRadialGradient(
+        smx, smy, 0,
+        smx, smy, W * 0.55
+      );
+      g1.addColorStop(0,   `rgba(180, 0, 0, 0.72)`);
+      g1.addColorStop(0.4, `rgba(100, 0, 0, 0.35)`);
+      g1.addColorStop(1,   `rgba(0,   0, 0, 0)`);
+      ctx.fillStyle = g1;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Blob 2: slow drift, accent
+      const bx = W * (0.3 + 0.4 * Math.sin(t * 0.7 + nx * 2));
+      const by = H * (0.3 + 0.4 * Math.cos(t * 0.5 + ny * 2));
+      const g2 = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.38);
+      g2.addColorStop(0,   `rgba(220, 20, 20, 0.45)`);
+      g2.addColorStop(0.5, `rgba(80,  0,  0, 0.2)`);
+      g2.addColorStop(1,   `rgba(0,   0,  0, 0)`);
+      ctx.fillStyle = g2;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Blob 3: deep opposite corner
+      const cx2 = W * (0.7 + 0.2 * Math.cos(t * 0.9));
+      const cy2 = H * (0.6 + 0.2 * Math.sin(t * 0.6));
+      const g3 = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, W * 0.3);
+      g3.addColorStop(0,   `rgba(140, 0, 10, 0.3)`);
+      g3.addColorStop(1,   `rgba(0,   0,  0, 0)`);
+      ctx.fillStyle = g3;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Vignette
+      const vg = ctx.createRadialGradient(W/2,H/2,H*0.1, W/2,H/2,H*0.85);
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, 'rgba(0,0,0,0.85)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Noise overlay (tiled)
+      ctx.globalAlpha = 0.18;
+      // shift noise slightly each frame for animated grain
+      const shift = (t * 30) % 256 | 0;
+      ctx.drawImage(noiseData, shift, shift, W, H);
+      ctx.drawImage(noiseData, shift - 256, shift, W, H);
+      ctx.drawImage(noiseData, shift, shift - 256, W, H);
+      ctx.drawImage(noiseData, shift - 256, shift - 256, W, H);
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
 </body>
 </html>

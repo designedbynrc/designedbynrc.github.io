@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trabajos · Tu Nombre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/css/global.css"/>
+  <style>
+    /* ── page background: subtle noise ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E")
+        center / 200px 200px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── grid of projects ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+      gap: 1.5px;           /* razor-thin gap = brutalist seams */
+      margin-top: 1rem;
+    }
+
+    /* ── single card ── */
+    .project-card {
+      position: relative;
+      background: var(--surface);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--border);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .project-card a { display: block; }
+
+    /* thumb */
+    .card-thumb {
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #1a0505;
+      position: relative;
+    }
+    .card-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease), filter 0.4s;
+      filter: saturate(0.6);
+    }
+    .project-card:hover .card-thumb img {
+      transform: scale(1.06);
+      filter: saturate(1);
+    }
+    /* placeholder when no image yet */
+    .thumb-placeholder {
+      width: 100%; height: 100%;
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-size: 3rem;
+      color: rgba(255,32,32,0.15);
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #1a0505 0%, #0d0000 100%);
+    }
+
+    /* red overlay on hover */
+    .card-thumb::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--red);
+      opacity: 0;
+      z-index: 1;
+      mix-blend-mode: multiply;
+      transition: opacity 0.4s;
+    }
+    .project-card:hover .card-thumb::before { opacity: 0.18; }
+
+    /* body */
+    .card-body {
+      padding: 1.4rem 1.6rem 1.6rem;
+    }
+    .card-tags {
+      display: flex; flex-wrap: wrap; gap: 0.45rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      color: var(--red);
+      border-radius: 1px;
+    }
+    .card-year {
+      margin-left: auto;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      letter-spacing: 0.04em;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+      transition: color 0.25s;
+    }
+    .project-card:hover .card-title { color: var(--red); }
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 1.2rem;
+    }
+    .card-cta {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--red);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .card-cta::after {
+      content: '→';
+      transition: transform 0.25s;
+    }
+    .project-card:hover .card-cta::after { transform: translateX(5px); }
+
+    /* ── "add project" placeholder card ── */
+    .card-add {
+      border: 1.5px dashed rgba(255,32,32,0.15);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      padding: 3rem;
+      background: transparent;
+      opacity: 0.35;
+      cursor: default;
+      min-height: 240px;
+    }
+    .card-add-icon {
+      font-size: 2rem;
+      color: var(--red);
+      line-height: 1;
+    }
+    .card-add-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── page counter ── */
+    .works-count {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .works-count strong { color: var(--red); }
+
+    /* ─ entry animation ─ */
+    .project-card {
+      opacity: 0;
+      transform: translateY(28px);
+      animation: cardIn 0.6s var(--ease) forwards;
+    }
+    @keyframes cardIn {
+      to { opacity:1; transform:translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" id="nav">
+    <a href="../index.html" class="nav-logo">TN<span>.</span></a>
+    <div class="nav-links">
+      <a href="trabajos.html" class="active">Trabajos</a>
+      <a href="sobre-mi.html">Sobre mí</a>
+      <a href="../index.html">Inicio</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+
+    <p class="section-eyebrow">Selección de trabajos</p>
+    <h1 class="section-heading">Trabajos</h1>
+    <p class="works-count">Mostrando <strong id="count">0</strong> proyectos</p>
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  CÓMO AGREGAR UN NUEVO PROYECTO:                            ║
+    ║  1. Copia uno de los <article class="project-card"> de abajo║
+    ║  2. Crea su carpeta en /projects/nombre-proyecto/           ║
+    ║  3. Actualiza href, title, desc, tags y thumb               ║
+    ╚══════════════════════════════════════════════════════════════╝
+    -->
+    <div class="projects-grid" id="grid">
+
+      <!-- PROYECTO 01 ─────────────────────────────────────── -->
+      <article class="project-card" style="animation-delay: 0.05s">
+        <a href="../projects/proyecto-01/index.html">
+          <div class="card-thumb">
+            <!-- Si tienes imagen: <img src="../projects/proyecto-01/assets/cover.jpg" alt="Proyecto 01"/> -->
+            <div class="thumb-placeholder">01</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tags">
+              <span class="tag">Web</span>
+              <span class="tag">React</span>
+              <span class="card-year">2025</span>
+            </div>
+            <h2 class="card-title">Nombre del Proyecto</h2>
+            <p class="card-desc">Descripción breve: qué hace, para quién y qué tecnologías usaste.</p>
+            <span class="card-cta">Ver proyecto</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- PROYECTO 02 (ejemplo) ────────────────────────────── -->
+      <article class="project-card" style="animation-delay: 0.12s">
+        <a href="#">
+          <div class="card-thumb">
+            <div class="thumb-placeholder">02</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tags">
+              <span class="tag">Branding</span>
+              <span class="tag">Figma</span>
+              <span class="card-year">2025</span>
+            </div>
+            <h2 class="card-title">Otro Proyecto</h2>
+            <p class="card-desc">Otro trabajo aquí. Duplica esta tarjeta para agregar proyectos nuevos.</p>
+            <span class="card-cta">Ver proyecto</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- PLACEHOLDER: "próximamente" ─────────────────────── -->
+      <div class="project-card card-add" style="animation-delay: 0.2s">
+        <div class="card-add-icon">+</div>
+        <span class="card-add-label">Próximo proyecto</span>
+      </div>
+
+    </div><!-- /projects-grid -->
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="yr"></span> Tu Nombre · <a href="../index.html">Inicio</a></p>
+  </footer>
+
+  <script src="../assets/js/nav.js"></script>
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+    // Count real project cards (exclude placeholder)
+    const realCards = document.querySelectorAll('.project-card:not(.card-add)').length;
+    document.getElementById('count').textContent = realCards;
+  </script>
+</body>
+</html>
